@@ -518,3 +518,33 @@ kbd {
 }
 .inset.right .util { left: auto; right: -3px; }
 .inset .util { text-transform: none; }
+
+/* Siguiente con su interruptor de cambio automático pegado: un solo botón partido en dos, con una
+   sola sombra. El interruptor va pulsado (relleno de --ink) mientras pasa solo a la siguiente
+   variación. */
+.split { display: flex; min-width: 0; box-shadow: var(--shadow); }
+.split .btn { box-shadow: none; }
+.split .btn:first-child { flex: 1; min-width: 0; padding-left: 10px; padding-right: 10px; }
+.split .btn + .btn { border-left: 0; }
+.split .btn:active { transform: none; box-shadow: none; }
+.split:has(.btn:active) { transform: translate(2px, 2px); box-shadow: 3px 3px 0 var(--shade); }
+.split .loop {
+  flex: none;
+  width: auto;
+  display: grid;
+  place-items: center;
+  padding: 6px 9px;
+  color: var(--muted);
+}
+.loop svg { display: block; width: 18px; height: 18px; }
+.split .loop[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+@media (prefers-reduced-motion: reduce) {
+  .split:has(.btn:active) { transform: none; }
+}
+@media (max-width: 720px) {
+  /* the middle column holds Siguiente and its switch */
+  .deck { grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr) minmax(0, 1fr); }
+  .deck .split .btn:first-child { padding-left: 4px; padding-right: 4px; }
+  .deck .split .loop { padding: 6px 5px; }
+  .deck .loop svg { width: 16px; height: 16px; }
+}

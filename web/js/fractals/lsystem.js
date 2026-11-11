@@ -110,9 +110,10 @@ function create(ctx, values) {
       if (s.auto && curve) {
         if (drawn < curve.count) {
           drawn = Math.min(curve.count, drawn + (curve.count / values.duration) * dt);
-        } else {
+        } else if (s.autoNext) {
+          const before = hold;
           hold += dt;
-          if (hold > 4 && hold - dt <= 4) this.next();
+          if (before <= 4 && hold > 4) this.next();
         }
         camera.follow(target, dt, 1.2);
         changed = true;

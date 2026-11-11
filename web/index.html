@@ -59,11 +59,14 @@
           <legend data-i18n="g.run">Animación</legend>
           <div class="buttons">
             <button class="btn wide play desk" type="button" data-act="play" data-i18n-title="t.play" title="Reproducir / pausa (espacio)"><span data-i18n="play">Play</span></button>
-            <button class="btn ghost desk" type="button" data-act="next" data-i18n="next" data-i18n-title="t.next" title="Siguiente (N)">Siguiente</button>
+            <div class="split wide desk">
+              <button class="btn ghost" type="button" data-act="next" data-i18n="next" data-i18n-title="t.next" title="Siguiente (N)">Siguiente</button>
+              <button class="btn ghost loop" type="button" data-act="loop" aria-pressed="true" data-i18n-title="t.loop" data-i18n-label="loop" title="Pasar sola a la siguiente variación (A)" aria-label="Cambio automático"><svg viewBox="0 0 9 9" aria-hidden="true" shape-rendering="crispEdges" fill="currentColor"><rect x="1" y="1" width="7" height="1"/><rect x="6" y="0" width="1" height="3"/><rect x="1" y="2" width="1" height="2"/><rect x="1" y="7" width="7" height="1"/><rect x="2" y="6" width="1" height="3"/><rect x="7" y="5" width="1" height="2"/></svg></button>
+            </div>
             <button class="btn ghost desk" type="button" data-act="fit" data-i18n="fit" data-i18n-title="t.fit" title="Volver a encuadrar (F)">Encajar</button>
-            <button class="btn ghost wide" type="button" data-act="share" data-i18n="share" data-i18n-title="t.share" title="Copiar un enlace a esta vista">Copiar enlace</button>
+            <button class="btn ghost m-wide" type="button" data-act="share" data-i18n="share" data-i18n-title="t.share" title="Copiar un enlace a esta vista">Compartir</button>
           </div>
-          <p class="hint" data-i18n="h.auto">Se mueve solo hasta que lo tocas; unos segundos después de soltarlo, sigue solo.</p>
+          <p class="hint" data-i18n="h.auto">Se mueve solo hasta que lo tocas; unos segundos después de soltarlo, sigue solo. El botón junto a Siguiente decide si pasa sola a la siguiente variación.</p>
         </fieldset>
 
         <fieldset class="m-only" id="look">
@@ -80,7 +83,10 @@
 
     <div class="deck" role="group" data-i18n-label="deck" aria-label="Mandos principales">
       <button class="btn play" type="button" data-act="play"><span data-i18n="play">Play</span></button>
-      <button class="btn ghost" type="button" data-act="next" data-i18n="next">Siguiente</button>
+      <div class="split">
+        <button class="btn ghost" type="button" data-act="next" data-i18n="next">Siguiente</button>
+        <button class="btn ghost loop" type="button" data-act="loop" aria-pressed="true" data-i18n-title="t.loop" data-i18n-label="loop" title="Pasar sola a la siguiente variación (A)" aria-label="Cambio automático"><svg viewBox="0 0 9 9" aria-hidden="true" shape-rendering="crispEdges" fill="currentColor"><rect x="1" y="1" width="7" height="1"/><rect x="6" y="0" width="1" height="3"/><rect x="1" y="2" width="1" height="2"/><rect x="1" y="7" width="7" height="1"/><rect x="2" y="6" width="1" height="3"/><rect x="7" y="5" width="1" height="2"/></svg></button>
+      </div>
       <button class="btn ghost" type="button" data-act="fit" data-i18n="fit">Encajar</button>
     </div>
 

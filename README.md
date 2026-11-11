@@ -17,11 +17,15 @@ En vivo: https://taridepaco.github.io/FractalDesigner/
 | L-system | Una gramática y una tortuga que dibuja en directo: Koch, isla de Koch, Hilbert, Peano, Gosper, punta de flecha de Sierpinski, terdragón, planta, arbusto. Las reglas se editan en el panel. |
 
 El estado de cada pestaña va en la URL (`#mandelbrot?x=…&y=…&z=…`), así que un enlace abre la misma
-vista; «Copiar enlace» lo copia. Un enlace a una vista exacta del Mandelbrot o del Julia se abre en
+vista; «Compartir» lo copia. Un enlace a una vista exacta del Mandelbrot o del Julia se abre en
 pausa sobre esa vista.
 
-Teclado: espacio (play / pausa), N (siguiente), F (encajar), P (paleta), flechas, + y −, 1 … 6
-(pestañas).
+Junto a «Siguiente» hay un interruptor de cambio automático (tecla A): encendido, cada pestaña pasa
+sola a la siguiente variación (preset o destino) cuando termina; apagado, se queda en la actual sin
+dejar de animarse (crecer, mecerse, ciclar colores…). Play/pausa, en cambio, lo para todo.
+
+Teclado: espacio (play / pausa), N (siguiente), A (cambio automático), F (encajar), P (paleta),
+flechas, + y −, 1 … 6 (pestañas).
 
 ## Diseño y despliegue
 
