@@ -1,0 +1,520 @@
+/* Fractal Designer: lo que el sistema común (system.css) no cubre.
+   Disposición de la página, las pestañas de fractales, el panel plegable, los desplegables, el
+   deslizador, el selector segmentado, los campos de texto, las teclas, el marco de la pantalla y
+   la ventanita (Julia / Mandelbrot) dentro de ella.
+   Todo con los tokens del sistema: sin colores literales ni radios.
+   La página, el panel y los controles son los de GameOfLifer (página de simulador del sistema común). */
+html, body { height: 100%; overflow: hidden; }
+
+body {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+/* barra superior */
+.topbar {
+  flex: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  padding: 10px max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px));
+  padding-top: max(10px, env(safe-area-inset-top, 0px));
+  border-bottom: var(--bw) solid var(--line);
+}
+.topbar .back { text-underline-offset: 4px; }
+.topbar h1 { font-size: 1.25rem; }
+.topbar .tag { margin-right: auto; }
+
+.app {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
+/* panel de controles */
+#panel {
+  flex: none;
+  background: var(--surface);
+  border-right: var(--bw) solid var(--line);
+  overflow-y: auto;
+  scrollbar-color: var(--line) var(--surface);
+}
+#panel[open] { width: 320px; }
+
+#panel > summary {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 44px;
+  padding: 8px 16px;
+  background: var(--surface);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  list-style: none;
+}
+#panel > summary::-webkit-details-marker { display: none; }
+#panel > summary::after {
+  content: "[+]";
+  font-family: var(--f-util);
+  font-weight: 700;
+  font-size: var(--util);
+}
+#panel[open] > summary { border-bottom: var(--bw) solid var(--line); }
+#panel[open] > summary::after { content: "[–]"; }
+#panel > summary:focus-visible { outline-offset: -3px; }
+
+#controls { padding: 0 16px 24px; }
+
+.pitch {
+  padding: 14px 0 0;
+  font-size: .92rem;
+  color: var(--muted);
+}
+
+fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0 0 18px;
+  border: 0;
+  border-bottom: var(--bw) dashed var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+fieldset:last-child { border-bottom: 0; padding-bottom: 0; }
+legend {
+  padding: 16px 0 0;
+  margin-bottom: 10px;
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: .8rem;
+  letter-spacing: -.02em;
+}
+
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field > label, .field > .label { display: block; font-size: .92rem; }
+
+.hint {
+  margin: 0;
+  font-size: .86rem;
+  color: var(--muted);
+}
+
+/* botones a dos columnas; el margen derecho deja ver la sombra */
+.buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  padding: 0 5px 5px 0;
+}
+.buttons .btn { width: 100%; min-height: 40px; text-align: center; }
+.buttons .wide { grid-column: 1 / -1; }
+
+/* play / pausa con icono de píxeles dibujado en CSS (los símbolos ▶ ⏸ salen como emoji en móvil) */
+.play { display: flex; align-items: center; justify-content: center; gap: 10px; }
+.play::before {
+  content: "";
+  flex: none;
+  width: 10px;
+  height: 14px;
+  background: currentColor;
+  /* triángulo escalonado de 5 columnas × 9 filas */
+  clip-path: polygon(0 0, 20% 0, 20% 11.11%, 40% 11.11%, 40% 22.22%, 60% 22.22%, 60% 33.33%, 80% 33.33%, 80% 44.44%, 100% 44.44%, 100% 55.56%, 80% 55.56%, 80% 66.67%, 60% 66.67%, 60% 77.78%, 40% 77.78%, 40% 88.89%, 20% 88.89%, 20% 100%, 0 100%);
+}
+.play[data-running="true"]::before {
+  width: 10px;
+  clip-path: polygon(0 0, 30% 0, 30% 100%, 0 100%, 0 0, 70% 0, 100% 0, 100% 100%, 70% 100%, 70% 0);
+}
+
+/* desplegable: caja cuadrada con flecha escalonada */
+.select { position: relative; display: block; }
+.select select {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  min-height: 40px;
+  margin: 0;
+  padding: 7px 36px 7px 10px;
+  font-family: var(--f-util);
+  font-weight: 500;
+  font-size: .78rem;
+  color: var(--ink);
+  background: var(--bg);
+  border: var(--bw) solid var(--line);
+  border-radius: 0;
+  cursor: pointer;
+}
+.select::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 13px;
+  width: 12px;
+  height: 6px;
+  margin-top: -3px;
+  background: var(--ink);
+  pointer-events: none;
+  clip-path: polygon(0 0, 100% 0, 100% 33.33%, 83.33% 33.33%, 83.33% 66.67%, 66.67% 66.67%, 66.67% 100%, 33.33% 100%, 33.33% 66.67%, 16.67% 66.67%, 16.67% 33.33%, 0 33.33%);
+}
+.select select:hover { background: var(--surface); }
+.select option { color: var(--ink); background: var(--surface); }
+
+/* deslizador: etiqueta y valor arriba, pista cuadrada debajo (igual que en Boider) */
+.slider {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  gap: 0 8px;
+}
+.slider label { display: block; font-size: .92rem; }
+.slider output {
+  font-family: var(--f-util);
+  font-weight: 700;
+  font-size: var(--util);
+  font-variant-numeric: tabular-nums;
+}
+.slider input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  grid-column: 1 / -1;
+  width: 100%;
+  height: 28px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  --thumb: 14px;
+  /* --p (0..1) lo pone ui.js; el relleno llega hasta el centro del mando */
+  --fill: calc(var(--thumb) / 2 + (100% - var(--thumb)) * var(--p, 0));
+}
+.slider input[type="range"]::-webkit-slider-runnable-track {
+  box-sizing: border-box;
+  height: 14px;
+  border: var(--bw) solid var(--line);
+  background: linear-gradient(to right, var(--second) var(--fill), var(--bg) var(--fill));
+}
+.slider input[type="range"]::-moz-range-track {
+  box-sizing: border-box;
+  height: 14px;
+  border: var(--bw) solid var(--line);
+  background: linear-gradient(to right, var(--second) var(--fill), var(--bg) var(--fill));
+}
+.slider input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  box-sizing: border-box;
+  width: var(--thumb);
+  height: 26px;
+  margin-top: -9px;
+  border: 0;
+  border-radius: 0;
+  background: var(--ink);
+}
+.slider input[type="range"]::-moz-range-thumb {
+  box-sizing: border-box;
+  width: var(--thumb);
+  height: 26px;
+  border: 0;
+  border-radius: 0;
+  background: var(--ink);
+}
+.slider input[type="range"]:hover::-webkit-slider-thumb,
+.slider input[type="range"]:active::-webkit-slider-thumb { background: var(--accent); }
+.slider input[type="range"]:hover::-moz-range-thumb,
+.slider input[type="range"]:active::-moz-range-thumb { background: var(--accent); }
+@media (pointer: coarse) {
+  .slider input[type="range"] { height: 36px; }
+}
+
+/* selector segmentado (bordes del tablero), como el de modo de Boider pero a dos */
+.modes {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+.modes input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+.modes label {
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: 36px;
+  padding: 6px 2px;
+  font-family: var(--f-util);
+  font-weight: 500;
+  font-size: .62rem;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  text-align: center;
+  background: var(--bg);
+  border: var(--bw) solid var(--line);
+  cursor: pointer;
+}
+.modes label + input + label { border-left: 0; }
+.modes input:checked + label { background: var(--ink); color: var(--bg); }
+.modes input:focus-visible + label {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+  position: relative;
+}
+
+/* teclas */
+.keys {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px 12px;
+  align-items: baseline;
+  margin: 0;
+  font-size: .86rem;
+}
+.keys dt { white-space: nowrap; }
+.keys dd { margin: 0; color: var(--muted); }
+kbd {
+  display: inline-block;
+  font-family: var(--f-util);
+  font-weight: 500;
+  font-size: .64rem;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  line-height: 1.4;
+  padding: 1px 5px;
+  color: var(--ink);
+  background: var(--bg);
+  border: 2px solid var(--line);
+  box-shadow: 2px 2px 0 var(--shade);
+}
+
+/* el tablero va enmarcado como una pantalla, con una línea de estado debajo */
+.screen {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  margin: 16px 21px 21px 16px;
+  margin-right: max(21px, env(safe-area-inset-right, 0px));
+  border: var(--bw) solid var(--line);
+  box-shadow: var(--shadow);
+  background: var(--surface);
+  overflow: hidden;
+}
+.screen canvas {
+  display: block;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  touch-action: none;
+  cursor: crosshair;
+}
+.screen canvas.panning { cursor: grabbing; }
+
+.status {
+  flex: none;
+  padding: 5px 10px;
+  border-top: var(--bw) solid var(--line);
+  background: var(--surface);
+  font-family: var(--f-util);
+  font-weight: 500;
+  font-size: var(--util);
+  letter-spacing: .04em;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.error {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  text-align: center;
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: .95rem;
+  color: var(--ink);
+  background: var(--surface);
+}
+.error-inline {
+  margin: 8px 0 0;
+  font-family: var(--f-util);
+  font-weight: 500;
+  font-size: .78rem;
+  color: var(--accent);
+}
+
+/* solo en el móvil: la barra de mandos y la sección de aspecto del panel */
+.deck, .m-only { display: none; }
+
+/* Móvil: la pantalla manda.
+   - Cabecera en una fila: solo la flecha de vuelta (el texto sigue para lectores de pantalla),
+     el título y el idioma. La etiqueta se oculta y el botón de tema pasa al panel (Aspecto).
+   - Bajo la pantalla, una barra con los tres mandos más usados.
+   - El panel empieza plegado (index.html) y al abrirse sube como una hoja por encima de la parte
+     baja del lienzo, sin encogerlo: el tablero no se recoloca. */
+@media (max-width: 720px) {
+  .topbar { flex-wrap: nowrap; gap: 10px; padding-top: max(8px, env(safe-area-inset-top, 0px)); padding-bottom: 8px; }
+  .topbar .back {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    min-height: 36px;
+    margin-left: -10px;
+    text-decoration: none;
+  }
+  .topbar .back-arrow { font-size: 1.1rem; }
+  .topbar .back-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .topbar h1 {
+    min-width: 0;
+    margin-right: auto;
+    font-size: 1.05rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .topbar .tag, .topbar .theme-btn { display: none; }
+
+  .app { flex-direction: column; }
+  .screen { order: 1; margin: 10px 17px 12px 12px; }
+  .status { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  .deck {
+    order: 2;
+    flex: none;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    padding: 0 max(17px, env(safe-area-inset-right, 0px)) 17px max(12px, env(safe-area-inset-left, 0px));
+  }
+  .deck .btn { min-width: 0; min-height: 44px; padding: 8px 4px; text-align: center; }
+  @media (max-width: 360px) { .deck .btn { font-size: .74em; letter-spacing: -.02em; } }
+
+  #panel,
+  #panel[open] {
+    order: 3;
+    position: relative;
+    flex: none;
+    width: 100%;
+    overflow: visible;
+    border-right: 0;
+    border-top: var(--bw) solid var(--line);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  #panel[open] > summary { border-bottom: 0; }
+  #panel[open] > #controls {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 100%;
+    z-index: 5;
+    max-height: 58dvh;
+    overflow-y: auto;
+    background: var(--surface);
+    border-top: var(--bw) solid var(--line);
+    border-bottom: var(--bw) solid var(--line);
+    box-shadow: 0 -5px 0 var(--shade);
+    scrollbar-color: var(--line) var(--surface);
+  }
+  #controls { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+  /* lo que ya está en la barra de mandos no se repite en el panel */
+  #panel .desk { display: none; }
+  #panel .m-wide { grid-column: 1 / -1; }
+  .m-only { display: flex; }
+}
+
+/* pestañas de fractales: una fila de botones pegados, como el selector de idioma.
+   Si no caben, la fila se desplaza en horizontal sin mover la página. */
+.tabs {
+  flex: none;
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 10px max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px));
+  border-bottom: var(--bw) solid var(--line);
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tabs button {
+  flex: none;
+  font-family: var(--f-util);
+  font-weight: 500;
+  font-size: var(--util);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  min-height: 36px;
+  padding: 7px 12px;
+  color: var(--ink);
+  background: var(--surface);
+  border: var(--bw) solid var(--line);
+}
+.tabs button + button { border-left: 0; }
+.tabs button[aria-selected="true"] { background: var(--ink); color: var(--bg); }
+.tabs button:focus-visible { outline-offset: -6px; }
+
+/* campos de texto del panel (reglas de los L-systems) */
+.field input[type="text"] {
+  min-height: 40px;
+  padding: 7px 10px;
+  font-family: var(--f-util);
+  font-weight: 500;
+  font-size: .78rem;
+}
+
+/* ventanita dentro de la pantalla (Julia del punto bajo el cursor, o el Mandelbrot para elegir c):
+   solo el marco y la etiqueta; el fractal lo dibuja el lienzo debajo */
+.inset {
+  position: absolute;
+  z-index: 2;
+  border: var(--bw) solid var(--line);
+  box-shadow: 3px 3px 0 var(--shade);
+  pointer-events: none;
+}
+.inset .util {
+  position: absolute;
+  left: -3px;
+  bottom: 100%;
+  margin-bottom: 3px;
+  padding: 1px 6px;
+  white-space: nowrap;
+  background: var(--surface);
+  color: var(--ink);
+  border: var(--bw) solid var(--line);
+}
+
+/* fundido entre presets y destinos */
+.screen canvas { transition: opacity .6s; }
+.screen canvas.fading { opacity: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .screen canvas { transition: none; }
+}
+
+@media (max-width: 720px) {
+  .tabs { padding-top: 8px; padding-bottom: 8px; }
+}
+.inset.right .util { left: auto; right: -3px; }
+.inset .util { text-transform: none; }

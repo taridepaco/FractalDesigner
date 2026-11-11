@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Fractal Designer</title>
+  <meta name="description" content="Fractales que se mueven solos hasta que los tocas: zoom infinito en el Mandelbrot, dragones que se despliegan, árboles con viento, Julia, el juego del caos y L-systems.">
+  <meta property="og:title" content="Fractal Designer">
+  <meta property="og:description" content="Fractales que se mueven solos hasta que los tocas: zoom infinito en el Mandelbrot, dragones que se despliegan, árboles con viento, Julia, el juego del caos y L-systems.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://taridepaco.github.io/FractalDesigner/">
+  <meta name="theme-color" content="#bfe3d6">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <script>
+    // idioma antes del primer pintado: ?lang=, luego la última elección, luego el navegador
+    (function () {
+      var l = null;
+      try {
+        var q = new URLSearchParams(location.search).get("lang"), s = null;
+        try { s = localStorage.getItem("taridepaco-lang"); } catch (e) { /* sin almacenamiento */ }
+        var n = (navigator.languages && navigator.languages[0]) || navigator.language || "";
+        l = q || s || (/^es/i.test(n) ? "es" : "en");
+      } catch (e) { /* navegador antiguo */ }
+      document.documentElement.lang = l === "en" ? "en" : "es";
+    })();
+  </script>
+  <script src="theme.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Martian+Mono:wght@500;700&display=swap">
+  <link rel="stylesheet" href="system.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="util back" href="https://taridepaco.github.io/"><span class="back-arrow" aria-hidden="true">←</span><span class="back-text"> taridepaco</span></a>
+    <h1>Fractal Designer</h1>
+    <span class="tag" data-i18n="kind">Generador</span>
+    <button class="chip theme-btn" type="button">Tema: auto</button>
+    <div class="lang-switch" role="group" aria-label="Language / Idioma">
+      <button type="button" data-lang="es" lang="es" aria-label="Español" aria-pressed="true">ES</button>
+      <button type="button" data-lang="en" lang="en" aria-label="English" aria-pressed="false">EN</button>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs" role="tablist" data-i18n-label="tabs" aria-label="Fractales"></nav>
+
+  <div class="app">
+    <details id="panel" open>
+      <summary><span class="util" data-i18n="panel">Controles</span></summary>
+      <script>
+        // phones and low screens (landscape phones) start with the panel folded, before the first paint
+        if (window.matchMedia && matchMedia("(max-width: 720px), (max-height: 500px)").matches) document.getElementById("panel").open = false;
+      </script>
+      <div id="controls">
+        <p class="pitch" id="pitch">&nbsp;</p>
+
+        <fieldset>
+          <legend data-i18n="g.run">Animación</legend>
+          <div class="buttons">
+            <button class="btn wide play desk" type="button" data-act="play" data-i18n-title="t.play" title="Reproducir / pausa (espacio)"><span data-i18n="play">Play</span></button>
+            <button class="btn ghost desk" type="button" data-act="next" data-i18n="next" data-i18n-title="t.next" title="Siguiente (N)">Siguiente</button>
+            <button class="btn ghost desk" type="button" data-act="fit" data-i18n="fit" data-i18n-title="t.fit" title="Volver a encuadrar (F)">Encajar</button>
+            <button class="btn ghost wide" type="button" data-act="share" data-i18n="share" data-i18n-title="t.share" title="Copiar un enlace a esta vista">Copiar enlace</button>
+          </div>
+          <p class="hint" data-i18n="h.auto">Se mueve solo hasta que lo tocas; unos segundos después de soltarlo, sigue solo.</p>
+        </fieldset>
+
+        <fieldset class="m-only" id="look">
+          <legend data-i18n="g.look">Aspecto</legend>
+          <div class="row"><button class="chip theme-btn" type="button">Tema: auto</button></div>
+        </fieldset>
+
+        <fieldset class="help">
+          <legend data-i18n="g.help">Manejo</legend>
+          <dl class="keys" id="keys"></dl>
+        </fieldset>
+      </div>
+    </details>
+
+    <div class="deck" role="group" data-i18n-label="deck" aria-label="Mandos principales">
+      <button class="btn play" type="button" data-act="play"><span data-i18n="play">Play</span></button>
+      <button class="btn ghost" type="button" data-act="next" data-i18n="next">Siguiente</button>
+      <button class="btn ghost" type="button" data-act="fit" data-i18n="fit">Encajar</button>
+    </div>
+
+    <main class="screen">
+      <canvas id="view" data-i18n-label="view"></canvas>
+      <div id="inset" class="inset" hidden><span class="util" id="inset-label"></span></div>
+      <div id="stats" class="status" aria-live="off">&nbsp;</div>
+      <div id="error" class="error" role="alert" hidden></div>
+    </main>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

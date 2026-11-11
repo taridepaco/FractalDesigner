@@ -1,0 +1,9 @@
+{
+  "name": "fractal-designer",
+  "private": true,
+  "type": "module",
+  "description": "Fractals that move on their own until you touch them. Static site in web/.",
+  "scripts": {
+    "test": "bash deploy/test.sh"
+  }
+}
