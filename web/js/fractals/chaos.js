@@ -227,9 +227,10 @@ function create(ctx, values) {
       if (!s.running) return false;
       age += dt * values.rate;
       if (total >= budget()) {
-        if (s.auto) {
+        if (s.auto && s.autoNext) {
+          const before = full;
           full += dt;
-          if (full > 5 && full - dt <= 5) this.next();
+          if (before <= 5 && full > 5) this.next();
         }
         return false;
       }

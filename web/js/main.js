@@ -121,6 +121,7 @@ function start() {
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   let running = !reducedMotion; // starts playing as soon as the page opens
+  let autoNext = true;          // move on to the next variation (preset, destination) by itself
   let lastTouch = -Infinity;
   let dirty = true;
   let quality = 1;              // fraction of the device pixels the heavy tabs render
@@ -208,7 +209,7 @@ function start() {
     const rows = [
       ['k.drag', 'h.drag'], ['k.wheel', 'h.wheel'], ['k.pinch', 'h.pinch'], ['k.dbl', 'h.dbl'],
       ...(current ? current.mod.keys || [] : []),
-      ['k.space', 'h.play'], ['N', 'h.next'], ['F', 'h.fit'], ['P', 'h.pal'], ['k.arrows', 'h.arrows'], ['1 … 6', 'h.tabs'],
+      ['k.space', 'h.play'], ['N', 'h.next'], ['A', 'h.loop'], ['F', 'h.fit'], ['P', 'h.pal'], ['k.arrows', 'h.arrows'], ['1 … 6', 'h.tabs'],
     ];
     const dl = $('keys');
     dl.textContent = '';
@@ -349,7 +350,13 @@ function start() {
     scheduleUrl();
   }
 
-  const ACTIONS = { play: () => setRunning(!running), next, fit, share };
+  // Automatic change of variation: off, a tab stays on its preset or destination (and keeps
+  // animating) instead of moving on when it is done. Play/pause stops everything; this does not.
+  const loopBtns = document.querySelectorAll('[data-act="loop"]');
+  function paintLoop() { loopBtns.forEach((b) => b.setAttribute('aria-pressed', autoNext)); }
+  function toggleLoop() { autoNext = !autoNext; paintLoop(); }
+
+  const ACTIONS = { play: () => setRunning(!running), next, fit, share, loop: toggleLoop };
   document.querySelectorAll('[data-act]').forEach((b) => b.addEventListener('click', ACTIONS[b.dataset.act]));
 
   // ---- input --------------------------------------------------------------
@@ -367,6 +374,7 @@ function start() {
     else if (k === 'n') next();
     else if (k === 'f') fit();
     else if (k === 'p') cyclePalette();
+    else if (k === 'a') toggleLoop();
     else if (k >= '1' && k <= String(tabs.length)) switchTo(tabs[+k - 1]);
     else if (k === '+' || k === '=') { touch(); camera.zoomAt(canvas.width / 2, canvas.height / 2, 1.25); }
     else if (k === '-') { touch(); camera.zoomAt(canvas.width / 2, canvas.height / 2, 0.8); }
@@ -417,7 +425,7 @@ function start() {
     const flying = camera.stepFlight(dt);
     if (flying) lastTouch = now;
     const auto = running && !input.active && !flying && now - lastTouch > IDLE_MS;
-    const changed = current.inst.update(dt, { running, auto, now });
+    const changed = current.inst.update(dt, { running, auto, now, autoNext });
     let drew = false;
     if (changed || dirty || camera.version !== seenVersion) {
       gl.viewport(0, 0, canvas.width, canvas.height);
@@ -455,6 +463,7 @@ function start() {
   paintText();
   syncTheme();
   paintPlay();
+  paintLoop();
   window.fractals = { ctx, tabs, get current() { return current; }, setRunning }; // handy from the console
 
   // The canvas only has its final size once the web fonts are in (they change the width of the

@@ -152,9 +152,10 @@ function create(ctx, values) {
       if (s.auto && tree) {
         if (grown < tree.depth) {
           grown = Math.min(tree.depth, grown + dt * values.pace * Math.max(1.2, tree.depth / 4.5));
-        } else {
+        } else if (s.autoNext) {
+          const before = hold;
           hold += dt * values.pace;
-          if (hold > 12 && hold - dt * values.pace <= 12) this.next();
+          if (before <= 12 && hold > 12) this.next();
         }
         camera.follow(target, dt, 1.2);
         changed = true;

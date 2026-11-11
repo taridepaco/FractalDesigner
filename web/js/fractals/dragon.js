@@ -154,7 +154,7 @@ function create(ctx, values) {
     restart();
   }
 
-  function advance(dt) {
+  function advance(dt, autoNext) {
     const pace = values.pace;
     if (phase === 'turn') {
       u = Math.min(1, u + (dt * pace) / 1.5);
@@ -172,9 +172,10 @@ function create(ctx, values) {
           startGeneration();
         }
       }
-    } else if (phase === 'end') {
+    } else if (phase === 'end' && autoNext) {
+      const before = endT;
       endT += dt;
-      if (endT > 3 && endT - dt <= 3) {
+      if (before <= 3 && endT > 3) {
         // loop: fade and start the next preset
         ctx.fade(() => applyPreset(PRESET_IDS[(PRESET_IDS.indexOf(values.preset) + 1) % PRESET_IDS.length]));
       }
@@ -212,7 +213,7 @@ function create(ctx, values) {
         changed = true;
       }
       if (s.auto && fig && !drawing && !pickingPivot) {
-        advance(dt);
+        advance(dt, s.autoNext);
         if (target) camera.follow(target, dt, 1.6);
         changed = true;
       }

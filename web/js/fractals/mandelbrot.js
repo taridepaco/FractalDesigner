@@ -243,7 +243,7 @@ function create(ctx, values) {
     return { x: v.x + c * px - s * py, y: v.y + s * px + c * py };
   }
 
-  function autopilot(dt) {
+  function autopilot(dt, autoNext) {
     if (adopt) { adopt = false; ownMoves = camera.moves; }
     if (camera.moves !== ownMoves) resumeFromHere = true; // someone moved the view by hand
     if (resumeFromHere) {
@@ -256,7 +256,7 @@ function create(ctx, values) {
     }
     const limit = Math.max(minH, HOME.h / 10 ** values.depth);
     if (fading) return;
-    if (camera.h <= limit * 1.0001) {
+    if (autoNext && camera.h <= limit * 1.0001) {
       fading = true;
       ctx.fade(() => {
         fading = false;
@@ -355,7 +355,7 @@ function create(ctx, values) {
         changed = true;
       }
       if (s.auto) {
-        autopilot(dt);
+        autopilot(dt, s.autoNext);
         changed = true;
       }
       return changed;
